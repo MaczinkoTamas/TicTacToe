@@ -1,0 +1,115 @@
+
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+class TicTacToeGameTest {
+    private TicTacToeGame game;
+    @BeforeEach
+    void setUp() {
+        game = new TicTacToeGame();
+    }
+    @Test
+    void testMakeMoveShouldReturnTrueWhenPositionIsValid(){
+        boolean result = game.makeMove(0);
+        assertTrue(result);
+    }
+
+    @Test
+    void testMakeMoveShouldReturnFalseWhenPositionIsAlreadyTaken(){
+        game.makeMove(4);
+        boolean result = game.makeMove(4);
+        assertFalse(result);
+    }
+    @Test
+    void testMakeMoveShouldReturnExceptionWhenPositionIsTooLow(){
+        assertThrows(IllegalArgumentException.class, ()-> {
+            game.makeMove(-1);
+        });
+
+    }
+    @Test
+    void testMakeMoveShouldThrowExceptionWhenPositionIsTooHigh(){
+        assertThrows(IllegalArgumentException.class, ()-> {
+            game.makeMove(9);
+        });
+    }
+    @Test
+    void testGetBoardShouldReturnBoardArray(){
+        char[] board = game.getBoard();
+        assertNotNull(board);
+        assertEquals(9, board.length);
+    }
+
+    @Test
+    void testMakeMoveStoresTheSelectedPlayer() {
+        assertTrue(game.makeMove(0, 'O'));
+        assertEquals('O', game.getBoard()[0]);
+    }
+
+    @Test
+    void testGetWinnerReturnsWinningPlayer() {
+        game.makeMove(0, 'X');
+        game.makeMove(1, 'X');
+        game.makeMove(2, 'X');
+
+        assertEquals('X', game.getWinner());
+    }
+
+    @Test
+    void computerTakesWinningMoveWhenAvailable() {
+        game.makeMove(0, 'O');
+        game.makeMove(1, 'O');
+        game.makeMove(3, 'X');
+        game.makeMove(4, 'X');
+
+        assertEquals(2, game.makeComputerMove());
+        assertEquals('O', game.getWinner());
+    }
+
+    @Test
+    void computerBlocksHumanWinningMove() {
+        game.makeMove(0, 'X');
+        game.makeMove(1, 'X');
+        game.makeMove(4, 'O');
+
+        assertEquals(2, game.makeComputerMove());
+        assertEquals(' ', game.getWinner());
+    }
+
+    @Test
+    void testMainDisplaysBoardAndWinner() {
+        java.io.InputStream originalIn = System.in;
+        java.io.PrintStream originalOut = System.out;
+        java.io.ByteArrayOutputStream output = new java.io.ByteArrayOutputStream();
+        try {
+            System.setIn(new java.io.ByteArrayInputStream("1".getBytes()));
+            System.setOut(new java.io.PrintStream(output));
+            TicTacToeGame.main(new String[0]);
+        } finally {
+            System.setIn(originalIn);
+            System.setOut(originalOut);
+        }
+
+        assertTrue(output.toString().contains("A gép az "));
+    }
+
+    @Test
+    void testMainHandlesInvalidAndTakenPositionsAndDraws() {
+        java.io.InputStream originalIn = System.in;
+        java.io.PrintStream originalOut = System.out;
+        java.io.ByteArrayOutputStream output = new java.io.ByteArrayOutputStream();
+        try {
+            System.setIn(new java.io.ByteArrayInputStream("nope 10 1 1".getBytes()));
+            System.setOut(new java.io.PrintStream(output));
+            TicTacToeGame.main(new String[0]);
+        } finally {
+            System.setIn(originalIn);
+            System.setOut(originalOut);
+        }
+
+        assertTrue(output.toString().contains("Kérlek, 1 és 9 közötti számot adj meg."));
+        assertTrue(output.toString().contains("A mező sorszáma 1 és 9 között lehet."));
+        assertTrue(output.toString().contains("Ez a mező már foglalt."));
+    }
+}

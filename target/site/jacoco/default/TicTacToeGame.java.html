@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="hu"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TicTacToeGame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TicTacToe</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">TicTacToeGame.java</span></div><h1>TicTacToeGame.java</h1><pre class="source lang-java linenums">import java.util.Scanner;
+
+<span class="fc" id="L3">public class TicTacToeGame {</span>
+<span class="fc" id="L4">    private final char[] board = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};</span>
+
+    public boolean makeMove(int position) {
+<span class="fc" id="L7">        return makeMove(position, 'X');</span>
+    }
+
+    public boolean makeMove(int position, char player) {
+<span class="fc bfc" id="L11" title="All 4 branches covered.">        if (position &lt; 0 || position &gt; 8) {</span>
+<span class="fc" id="L12">            throw new IllegalArgumentException(&quot;A mező sorszáma 1 és 9 között lehet.&quot;);</span>
+        }
+<span class="pc bpc" id="L14" title="1 of 4 branches missed.">        if (player != 'X' &amp;&amp; player != 'O') {</span>
+<span class="nc" id="L15">            throw new IllegalArgumentException(&quot;A játékos jele csak X vagy O lehet.&quot;);</span>
+        }
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (board[position] != ' ') {</span>
+<span class="fc" id="L18">            return false;</span>
+        }
+<span class="fc" id="L20">        board[position] = player;</span>
+<span class="fc" id="L21">        return true;</span>
+    }
+
+    public char getWinner() {
+<span class="fc" id="L25">        int[][] winningLines = {</span>
+                {0, 1, 2}, {3, 4, 5}, {6, 7, 8},
+                {0, 3, 6}, {1, 4, 7}, {2, 5, 8},
+                {0, 4, 8}, {2, 4, 6}
+        };
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        for (int[] line : winningLines) {</span>
+<span class="fc" id="L31">            char player = board[line[0]];</span>
+<span class="fc bfc" id="L32" title="All 6 branches covered.">            if (player != ' ' &amp;&amp; player == board[line[1]] &amp;&amp; player == board[line[2]]) {</span>
+<span class="fc" id="L33">                return player;</span>
+            }
+        }
+<span class="fc" id="L36">        return ' ';</span>
+    }
+
+    public int makeComputerMove() {
+<span class="fc" id="L40">        int bestPosition = -1;</span>
+<span class="fc" id="L41">        int bestScore = Integer.MIN_VALUE;</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (int position = 0; position &lt; board.length; position++) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            if (board[position] == ' ') {</span>
+<span class="fc" id="L44">                board[position] = 'O';</span>
+<span class="fc" id="L45">                int score = minimax('X', 1);</span>
+<span class="fc" id="L46">                board[position] = ' ';</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">                if (score &gt; bestScore) {</span>
+<span class="fc" id="L48">                    bestScore = score;</span>
+<span class="fc" id="L49">                    bestPosition = position;</span>
+                }
+            }
+        }
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (bestPosition &gt;= 0) {</span>
+<span class="fc" id="L54">            board[bestPosition] = 'O';</span>
+        }
+<span class="fc" id="L56">        return bestPosition;</span>
+    }
+
+    private int minimax(char player, int depth) {
+<span class="fc" id="L60">        char winner = getWinner();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (winner == 'O') {</span>
+<span class="fc" id="L62">            return 10 - depth;</span>
+        }
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (winner == 'X') {</span>
+<span class="fc" id="L65">            return depth - 10;</span>
+        }
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (isBoardFull()) {</span>
+<span class="fc" id="L68">            return 0;</span>
+        }
+
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        int bestScore = player == 'O' ? Integer.MIN_VALUE : Integer.MAX_VALUE;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        for (int position = 0; position &lt; board.length; position++) {</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (board[position] == ' ') {</span>
+<span class="fc" id="L74">                board[position] = player;</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                int score = minimax(player == 'O' ? 'X' : 'O', depth + 1);</span>
+<span class="fc" id="L76">                board[position] = ' ';</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                bestScore = player == 'O'</span>
+<span class="fc" id="L78">                        ? Math.max(bestScore, score)</span>
+<span class="fc" id="L79">                        : Math.min(bestScore, score);</span>
+            }
+        }
+<span class="fc" id="L82">        return bestScore;</span>
+    }
+
+    private boolean isBoardFull() {
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        for (char cell : board) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            if (cell == ' ') {</span>
+<span class="fc" id="L88">                return false;</span>
+            }
+        }
+<span class="fc" id="L91">        return true;</span>
+    }
+
+    public char[] getBoard() {
+<span class="fc" id="L95">        return board.clone();</span>
+    }
+
+    private void printBoard(java.io.PrintStream out) {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (int row = 0; row &lt; 3; row++) {</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            for (int column = 0; column &lt; 3; column++) {</span>
+<span class="fc" id="L101">                int position = row * 3 + column;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                char cell = board[position] == ' ' ? (char) ('1' + position) : board[position];</span>
+<span class="fc" id="L103">                out.print(&quot; &quot; + cell + &quot; &quot;);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                if (column &lt; 2) {</span>
+<span class="fc" id="L105">                    out.print(&quot;|&quot;);</span>
+                }
+            }
+<span class="fc" id="L108">            out.println();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (row &lt; 2) {</span>
+<span class="fc" id="L110">                out.println(&quot;---+---+---&quot;);</span>
+            }
+        }
+<span class="fc" id="L113">    }</span>
+
+    private void play(Scanner input, java.io.PrintStream out) {
+<span class="pc bpc" id="L116" title="2 of 4 branches missed.">        while (getWinner() == ' ' &amp;&amp; !isBoardFull()) {</span>
+<span class="fc" id="L117">            printBoard(out);</span>
+<span class="fc" id="L118">            out.println(&quot;Te következel X-szel. Válassz egy mezőt (1-9):&quot;);</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if (!input.hasNextInt()) {</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                if (!input.hasNext()) {</span>
+<span class="fc" id="L121">                    return;</span>
+                }
+<span class="fc" id="L123">                input.next();</span>
+<span class="fc" id="L124">                out.println(&quot;Kérlek, 1 és 9 közötti számot adj meg.&quot;);</span>
+<span class="fc" id="L125">                continue;</span>
+            }
+
+<span class="fc" id="L128">            int position = input.nextInt() - 1;</span>
+<span class="pc bpc" id="L129" title="1 of 4 branches missed.">            if (position &lt; 0 || position &gt; 8) {</span>
+<span class="fc" id="L130">                out.println(&quot;A mező sorszáma 1 és 9 között lehet.&quot;);</span>
+<span class="fc" id="L131">                continue;</span>
+            }
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if (!makeMove(position, 'X')) {</span>
+<span class="fc" id="L134">                out.println(&quot;Ez a mező már foglalt.&quot;);</span>
+<span class="fc" id="L135">                continue;</span>
+            }
+<span class="pc bpc" id="L137" title="2 of 4 branches missed.">            if (getWinner() == ' ' &amp;&amp; !isBoardFull()) {</span>
+<span class="fc" id="L138">                int computerPosition = makeComputerMove();</span>
+<span class="fc" id="L139">                out.println(&quot;A gép az &quot; + (computerPosition + 1) + &quot;. mezőt választotta.&quot;);</span>
+            }
+<span class="fc" id="L141">        }</span>
+
+<span class="nc" id="L143">        printBoard(out);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (getWinner() != ' ') {</span>
+<span class="nc" id="L145">            out.println(getWinner() + &quot; játékos nyert!&quot;);</span>
+        } else {
+<span class="nc" id="L147">            out.println(&quot;Döntetlen!&quot;);</span>
+        }
+<span class="nc" id="L149">    }</span>
+
+    public static void main(String[] args) {
+<span class="fc" id="L152">        new TicTacToeGame().play(new Scanner(System.in), System.out);</span>
+<span class="fc" id="L153">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
