@@ -9,18 +9,20 @@ class TicTacToeGameTest {
     void setUp() {
         game = new TicTacToeGame();
     }
+    //Érvényes lépések
     @Test
     void testMakeMoveShouldReturnTrueWhenPositionIsValid(){
         boolean result = game.makeMove(0);
         assertTrue(result);
     }
-
+//Foglalt pozíció
     @Test
     void testMakeMoveShouldReturnFalseWhenPositionIsAlreadyTaken(){
         game.makeMove(4);
         boolean result = game.makeMove(4);
         assertFalse(result);
     }
+    //Alacsony szám
     @Test
     void testMakeMoveShouldReturnExceptionWhenPositionIsTooLow(){
         assertThrows(IllegalArgumentException.class, ()-> {
@@ -28,25 +30,27 @@ class TicTacToeGameTest {
         });
 
     }
+    //Magas szám
     @Test
     void testMakeMoveShouldThrowExceptionWhenPositionIsTooHigh(){
         assertThrows(IllegalArgumentException.class, ()-> {
             game.makeMove(9);
         });
     }
+    //A tábla mezői
     @Test
     void testGetBoardShouldReturnBoardArray(){
         char[] board = game.getBoard();
         assertNotNull(board);
         assertEquals(9, board.length);
     }
-
+//Az eltárolt játékos
     @Test
     void testMakeMoveStoresTheSelectedPlayer() {
         assertTrue(game.makeMove(0, 'O'));
         assertEquals('O', game.getBoard()[0]);
     }
-
+//Nyertes játékos
     @Test
     void testGetWinnerReturnsWinningPlayer() {
         game.makeMove(0, 'X');
@@ -55,7 +59,7 @@ class TicTacToeGameTest {
 
         assertEquals('X', game.getWinner());
     }
-
+//A bot nyerő lépései
     @Test
     void computerTakesWinningMoveWhenAvailable() {
         game.makeMove(0, 'O');
@@ -66,7 +70,7 @@ class TicTacToeGameTest {
         assertEquals(2, game.makeComputerMove());
         assertEquals('O', game.getWinner());
     }
-
+//A bot akadályozó lépései
     @Test
     void computerBlocksHumanWinningMove() {
         game.makeMove(0, 'X');
@@ -76,7 +80,7 @@ class TicTacToeGameTest {
         assertEquals(2, game.makeComputerMove());
         assertEquals(' ', game.getWinner());
     }
-
+//Tábla és nyertes
     @Test
     void testMainDisplaysBoardAndWinner() {
         java.io.InputStream originalIn = System.in;
@@ -93,7 +97,7 @@ class TicTacToeGameTest {
 
         assertTrue(output.toString().contains("A gép az "));
     }
-
+//Érvénytelen, foglalt és döntetlen kezelése
     @Test
     void testMainHandlesInvalidAndTakenPositionsAndDraws() {
         java.io.InputStream originalIn = System.in;
