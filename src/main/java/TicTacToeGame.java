@@ -6,7 +6,7 @@ public class TicTacToeGame {
     public boolean makeMove(int position) {
         return makeMove(position, 'X');
     }
-
+//Játékos lépései
     public boolean makeMove(int position, char player) {
         if (position < 0 || position > 8) {
             throw new IllegalArgumentException("A mező sorszáma 1 és 9 között lehet.");
@@ -20,7 +20,7 @@ public class TicTacToeGame {
         board[position] = player;
         return true;
     }
-
+//Nyertes sorok/oszlopok
     public char getWinner() {
         int[][] winningLines = {
                 {0, 1, 2}, {3, 4, 5}, {6, 7, 8},
@@ -35,7 +35,7 @@ public class TicTacToeGame {
         }
         return ' ';
     }
-
+//Bot lépései
     public int makeComputerMove() {
         int bestPosition = -1;
         int bestScore = Integer.MIN_VALUE;
@@ -55,7 +55,7 @@ public class TicTacToeGame {
         }
         return bestPosition;
     }
-
+//A nyertes és pontszámok
     private int minimax(char player, int depth) {
         char winner = getWinner();
         if (winner == 'O') {
@@ -81,7 +81,7 @@ public class TicTacToeGame {
         }
         return bestScore;
     }
-
+//A tábla tele-> Törlés
     private boolean isBoardFull() {
         for (char cell : board) {
             if (cell == ' ') {
@@ -94,7 +94,7 @@ public class TicTacToeGame {
     public char[] getBoard() {
         return board.clone();
     }
-
+//Tábla kiíratása
     private void printBoard(java.io.PrintStream out) {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
@@ -111,7 +111,7 @@ public class TicTacToeGame {
             }
         }
     }
-
+//Játékmenet
     private void play(Scanner input, java.io.PrintStream out) {
         while (getWinner() == ' ' && !isBoardFull()) {
             printBoard(out);
